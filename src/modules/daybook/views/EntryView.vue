@@ -22,7 +22,7 @@
     <textarea placeholder="What happened today?"></textarea>
   </div>
 
-  <Fab />
+  <Fab icon="fa-save" />
 
   <img
     src="https://cdn.pixabay.com/photo/2020/09/06/08/00/red-thread-5548304__340.jpg"

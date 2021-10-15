@@ -1,11 +1,15 @@
 <template>
   <button class="btn btn-primary">
-    <i class="fa fa-plus"></i>
+    <i class="fa" :class="icon"></i>
   </button>
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    icon: { type: String, default: 'fa-plus' }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
