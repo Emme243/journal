@@ -11,6 +11,7 @@ export default {
     },
     {
       path: ':id',
+      props: true,
       name: 'entry',
       component: () =>
         import(/* webpackChunkName: "daybook-no-entry" */ '@/modules/daybook/views/EntryView')

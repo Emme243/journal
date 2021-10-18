@@ -8,4 +8,4 @@ export const getEntiresByTerm = state => (term = '') => {
   return state.entries.filter(entry => entry.text.toLowerCase().includes(term.toLocaleLowerCase()))
 }
 
-export const getEntiresById = (/* state */) => {}
+export const getEntiresById = state => id => state.entries.find(entry => entry.id === id)
