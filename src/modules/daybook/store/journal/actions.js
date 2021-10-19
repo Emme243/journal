@@ -3,6 +3,8 @@ import journalApi from '@/api/journalApi'
 
 export const loadEntries = async ({ commit }) => {
   const { data } = await journalApi.get('/entries.json')
+  if (!data) return commit('setEntries', [])
+
   const entries = []
   for (let id of Object.keys(data)) {
     entries.push({
@@ -25,4 +27,10 @@ export const createEntry = async ({ commit }, payload) => {
   const newEntry = { ...payload, id: data.name }
   commit('addEntry', newEntry)
   return data.name
+}
+
+export const deleteEntry = async ({ commit }, payload) => {
+  await journalApi.delete(`/entries.json`, payload)
+  commit('deleteEntry', payload)
+  return payload
 }

@@ -13,3 +13,7 @@ export const updateEntry = (state, payload) => {
 export const addEntry = (state, payload) => {
   state.entries.unshift(payload)
 }
+
+export const deleteEntry = (state, payload) => {
+  state.entries = state.entries.filter(entry => entry.id !== payload)
+}
