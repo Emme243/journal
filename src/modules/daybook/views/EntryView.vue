@@ -8,11 +8,19 @@
       </div>
 
       <div>
+        <input
+          type="file"
+          @change="onSelectedImage"
+          ref="imageSelector"
+          v-show="false"
+          accept="image/png, image/jpeg"
+        />
+
         <button class="btn btn-danger mx-2" @click="onDeleteEntry" v-if="entry.id">
           Borrar
           <i class="fa fa-trash-alt"></i>
         </button>
-        <button class="btn btn-primary mx-2">
+        <button class="btn btn-primary mx-2" @click="onSelectImage">
           Subir foto
           <i class="fa fa-upload"></i>
         </button>
@@ -22,11 +30,14 @@
     <div class="d-flex flex-column px-3 h-75">
       <textarea v-model="entry.text" placeholder="What happened today?"></textarea>
     </div>
+
     <img
-      src="https://cdn.pixabay.com/photo/2020/09/06/08/00/red-thread-5548304__340.jpg"
+      v-if="entry.picture && !localImage"
+      :src="entry.picture"
       alt="Entry picture"
       class="img-thumbnail"
     />
+    <img v-if="localImage" :src="localImage" alt="Entry picture" class="img-thumbnail" />
   </template>
 
   <Fab icon="fa-save" @on:click="saveEntry" />
@@ -37,6 +48,7 @@ import { defineAsyncComponent } from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import Swal from 'sweetalert2'
 import getDayMonthYear from '../helpers/getDayMonthYear'
+import uploadImage from '../helpers/uploadImage'
 
 export default {
   props: {
@@ -47,7 +59,9 @@ export default {
   },
   data() {
     return {
-      entry: null
+      entry: null,
+      localImage: null,
+      file: null
     }
   },
   methods: {
@@ -69,6 +83,8 @@ export default {
         allowOutsideClick: false
       })
       Swal.showLoading()
+      const picture = await uploadImage(this.file)
+      this.entry.picture = picture
 
       if (this.entry.id) {
         // Actualizar
@@ -79,6 +95,8 @@ export default {
         this.$router.push({ name: 'entry', params: { id } })
       }
 
+      this.file = null
+      this.localImage = null
       Swal.fire('Guradado', 'Entrada registrada con éxito', 'success')
     },
     async onDeleteEntry() {
@@ -99,6 +117,22 @@ export default {
         this.$router.push({ name: 'daybook-no-entry' })
         Swal.fire('Deleted', '', 'success')
       }
+    },
+    onSelectedImage(event) {
+      const [file] = event.target.files
+      if (!file) {
+        this.localImage = null
+        this.file = null
+        return
+      }
+
+      this.file = file
+      const fr = new FileReader()
+      fr.onload = () => (this.localImage = fr.result)
+      fr.readAsDataURL(file)
+    },
+    onSelectImage() {
+      this.$refs.imageSelector.click()
     }
   },
   computed: {
