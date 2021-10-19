@@ -35,6 +35,7 @@
 <script>
 import { defineAsyncComponent } from 'vue'
 import { mapGetters, mapActions } from 'vuex'
+import Swal from 'sweetalert2'
 import getDayMonthYear from '../helpers/getDayMonthYear'
 
 export default {
@@ -63,6 +64,12 @@ export default {
       this.entry = entry
     },
     async saveEntry() {
+      new Swal({
+        title: 'Espere por favor',
+        allowOutsideClick: false
+      })
+      Swal.showLoading()
+
       if (this.entry.id) {
         // Actualizar
         await this.updateEntry(this.entry)
@@ -71,10 +78,27 @@ export default {
         const id = await this.createEntry(this.entry)
         this.$router.push({ name: 'entry', params: { id } })
       }
+
+      Swal.fire('Guradado', 'Entrada registrada con éxito', 'success')
     },
     async onDeleteEntry() {
-      await this.deleteEntry(this.entry.id)
-      this.$router.push({ name: 'daybook-no-entry' })
+      const { isConfirmed } = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'You cannot revert this action',
+        showDenyButton: true,
+        confirmButtonText: 'Yes, I want'
+      })
+
+      if (isConfirmed) {
+        new Swal({
+          title: 'Please wait...',
+          allowOutsideClick: false
+        })
+        Swal.showLoading()
+        await this.deleteEntry(this.entry.id)
+        this.$router.push({ name: 'daybook-no-entry' })
+        Swal.fire('Deleted', '', 'success')
+      }
     }
   },
   computed: {
