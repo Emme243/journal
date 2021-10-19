@@ -50,14 +50,27 @@ export default {
     }
   },
   methods: {
-    ...mapActions('journal', ['updateEntry']),
+    ...mapActions('journal', ['updateEntry', 'createEntry']),
     loadEntry() {
-      const entry = { ...this.getEntiresById(this.id) }
-      if (!entry) return this.$router.push({ name: 'daybook-no-entry' })
+      let entry
+      if (this.id === 'new') {
+        entry = { text: '', date: new Date().getTime() }
+      } else {
+        entry = this.getEntiresById(this.id)
+        if (!entry) return this.$router.push({ name: 'daybook-no-entry' })
+      }
+
       this.entry = entry
     },
     async saveEntry() {
-      await this.updateEntry(this.entry)
+      if (this.entry.id) {
+        // Actualizar
+        await this.updateEntry(this.entry)
+      } else {
+        // Crear una nueva entrada
+        const id = await this.createEntry(this.entry)
+        this.$router.push({ name: 'entry', params: { id } })
+      }
     }
   },
   computed: {

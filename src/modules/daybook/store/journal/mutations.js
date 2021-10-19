@@ -10,4 +10,6 @@ export const updateEntry = (state, payload) => {
   state.entries[idx] = payload
 }
 
-export const addEntry = (/* state, payload */) => {}
+export const addEntry = (state, payload) => {
+  state.entries.unshift(payload)
+}
