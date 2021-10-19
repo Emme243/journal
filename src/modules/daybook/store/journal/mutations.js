@@ -5,5 +5,9 @@ export const setEntries = (state, payload) => {
   state.isLoading = false
 }
 
-export const updateEntry = (/* state, payload */) => {}
+export const updateEntry = (state, payload) => {
+  const idx = state.entries.findIndex(e => e.id === payload.id)
+  state.entries[idx] = payload
+}
+
 export const addEntry = (/* state, payload */) => {}
